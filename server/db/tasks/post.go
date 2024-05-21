@@ -1,53 +1,46 @@
 package tasks
 
 import (
+	"encoding/json"
 	"fmt"
 	"lms/db"
 )
 
 func (t *Task) Post() (int, error) {
-	query := ""
-	args := []interface{}{}
-	image := true
-
-	if t.Image == "" {
-		query = `INSERT INTO tasks (title, description, author, difficulty, tests, firstExample`
-		args = append(args, t.Title, t.Description, t.Author, t.Difficulty, t.Tests, t.FirstExample)
-
-		image = true
-	} else {
-		query = `INSERT INTO tasks (title, description, image, author, difficulty, tests, firstExample`
-		args = append(args, t.Title, t.Description, t.Image, t.Author, t.Difficulty, t.Tests, t.FirstExample)
-
-		image = false
+	testsJSON, err := json.Marshal(t.Tests)
+	if err != nil {
+		return 0, fmt.Errorf("failed to marshal tests: %w", err)
 	}
 
-	if t.SecondExample == "" {
-		if !image {
-			query += `) VALUES ($1, $2, $3, $4, $5, $6)`
-		} else {
-			query += `) VALUES ($1, $2, $3, $4, $5, $6, $7)`
-		}
-	} else if t.ThirdExample == "" {
-		if !image {
-			query += ", secondExample) VALUES ($1, $2, $3, $4, $5, $6,$7,$8)"
-		} else {
-			query += ", secondExample) VALUES ($1, $2, $3, $4, $5, $6, $7,$8,$9)"
-		}
+	query := "INSERT INTO tasks (title, description, author, difficulty, tests, firstExample"
+	args := []interface{}{t.Title, t.Description, t.Author, t.Difficulty, string(testsJSON), t.FirstExample}
+
+	if t.Image != "" {
+		query += ", image"
+		args = append(args, t.Image)
+	}
+
+	if t.SecondExample != "" {
+		query += ", secondExample"
 		args = append(args, t.SecondExample)
-	} else {
-		if !image {
-			query += ", secondExample, thirdExample) VALUES ($1, $2, $3, $4, $5, $6,$7,$9)"
-		} else {
-			query += ", secondExample, thirdExample) VALUES ($1, $2, $3, $4, $5, $6, $7,$8,$10)"
-		}
-		args = append(args, t.SecondExample, t.ThirdExample)
 	}
 
-	query += " RETURNING id"
+	if t.ThirdExample != "" {
+		query += ", thirdExample"
+		args = append(args, t.ThirdExample)
+	}
+
+	query += ") VALUES ("
+	for i := range args {
+		if i > 0 {
+			query += ", "
+		}
+		query += fmt.Sprintf("$%d", i+1)
+	}
+	query += ") RETURNING id"
+
 	var id int64
-	fmt.Println(args)
-	err := db.Db.QueryRow(query, args...).Scan(&id)
+	err = db.Db.QueryRow(query, args...).Scan(&id)
 	if err != nil {
 		return 0, err
 	}

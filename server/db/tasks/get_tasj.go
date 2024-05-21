@@ -2,6 +2,8 @@ package tasks
 
 import (
 	"database/sql"
+	"encoding/json"
+	"fmt"
 	"lms/db"
 )
 
@@ -16,6 +18,7 @@ func GetTask(id string) (Task, error) {
 	var task Task
 	var second, third sql.NullString
 	var image sql.NullString
+	var testsJSON string
 
 	var row *sql.Row
 	if id == "random" {
@@ -24,9 +27,14 @@ func GetTask(id string) (Task, error) {
 		row = db.Db.QueryRow(query, id)
 	}
 
-	err := row.Scan(&task.Id, &task.Title, &task.Description, &task.Author, &task.Difficulty, &task.Tests, &image, &task.FirstExample, &second, &third)
+	err := row.Scan(&task.Id, &task.Title, &task.Description, &task.Author, &task.Difficulty, &testsJSON, &image, &task.FirstExample, &second, &third)
 	if err != nil {
 		return Task{}, err
+	}
+
+	// Unmarshal the JSON into the Tests slice
+	if err = json.Unmarshal([]byte(testsJSON), &task.Tests); err != nil {
+		return Task{}, fmt.Errorf("failed to unmarshal tests JSON: %w", err)
 	}
 
 	if second.Valid {

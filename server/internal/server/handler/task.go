@@ -70,11 +70,32 @@ func SearchTask(w http.ResponseWriter, r *http.Request) {
 	}
 	response, err := json.Marshal(tasks)
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		server.Error(map[string]interface{}{"message": err.Error()}, w)
 		return
 	}
 
 	// Set the response header content-type to application/json
+	w.Header().Set("Content-Type", "application/json")
+	w.Write(response)
+}
+
+func GetTests(w http.ResponseWriter, r *http.Request) {
+	id := r.PathValue("id")
+	intId, err := strconv.Atoi(id)
+	if err != nil {
+		server.Error(map[string]interface{}{"message": err.Error()}, w)
+		return
+	}
+	tests, err := tasks.GetTests(intId)
+	if err != nil {
+		server.Error(map[string]interface{}{"message": err.Error()}, w)
+		return
+	}
+	response, err := json.Marshal(tests)
+	if err != nil {
+		server.Error(map[string]interface{}{"message": err.Error()}, w)
+		return
+	}
 	w.Header().Set("Content-Type", "application/json")
 	w.Write(response)
 }

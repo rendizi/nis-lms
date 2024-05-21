@@ -45,10 +45,10 @@ func Init() {
 			parallel INTEGER NOT NULL,
 			school TEXT NOT NULL,
 			
-			solved TEXT NOT NULL,
+			solved INTEGER NOT NULL,
 			leetcode TEXT,
 			badges TEXT,
-			rating INT NOT NULL
+			rating INTEGER NOT NULL
 );
     `
 	_, err = Db.Exec(createTableQuery)
@@ -66,9 +66,8 @@ func Init() {
     		password TEXT NOT NULL,
     		email TEXT NOT NULL,
     		school TEXT NOT NULL,
-    		leetcode TEXT,
-    		created INTEGER NOT NULL
-);
+    		leetcode TEXT
+                                            );
 
     `
 	_, err = Db.Exec(createTableQuery)
@@ -82,9 +81,12 @@ func Init() {
 	createTableQuery = `
         CREATE TABLE IF NOT EXISTS classwork (
 			id SERIAL PRIMARY KEY,
-			teacher INTEGER NOT NULL,
-			tasks INTEGER[],
-			deadline TEXT
+			title TEXT NOT NULL,
+			description TEXT NOT NULL,
+			teacher_id INTEGER NOT NULL,
+			tasks_id INTEGER[],
+			deadline TEXT, 
+			FOREIGN KEY (teacher_id) REFERENCES teachers(id) ON DELETE CASCADE
 );
     `
 	_, err = Db.Exec(createTableQuery)
@@ -103,12 +105,13 @@ func Init() {
     FOREIGN KEY (student_id) REFERENCES students(id) ON DELETE CASCADE
 );
 
+
 `
 	_, err = Db.Exec(createTableQuery)
 	if err != nil {
 		log.Fatal(err)
 	}
-	log.Println("Table 'classword_students' created successfully!")
+	log.Println("Table 'classwork_students' created successfully!")
 
 	createTableQuery = `
 		CREATE TABLE IF NOT EXISTS tasks (
@@ -129,4 +132,27 @@ func Init() {
 		log.Fatal(err)
 	}
 	log.Println("Table 'tasks' created successfully!")
+
+	createTableQuery = `
+		CREATE TABLE IF NOT EXISTS solutions (
+    id SERIAL PRIMARY KEY,
+    student_id INT NOT NULL,
+    task_id INT NOT NULL,
+    solution TEXT NOT NULL,
+    submission_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT fk_student
+        FOREIGN KEY(student_id) 
+        REFERENCES students(id),
+    CONSTRAINT fk_task
+        FOREIGN KEY(task_id) 
+        REFERENCES tasks(id),
+    UNIQUE(student_id, task_id) 
+);
+
+`
+	_, err = Db.Exec(createTableQuery)
+	if err != nil {
+		log.Fatal(err)
+	}
+	log.Println("Table 'solutions' created successfully!")
 }

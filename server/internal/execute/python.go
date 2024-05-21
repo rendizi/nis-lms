@@ -1,4 +1,4 @@
-package compile
+package execute
 
 import (
 	"context"
@@ -6,17 +6,17 @@ import (
 	"io/ioutil"
 	"os"
 	"os/exec"
+	"strings"
 	"time"
 )
 
-// TLEError is a custom error type for time limit exceeded
 type TLEError struct{}
 
 func (e *TLEError) Error() string {
 	return "execution timeout: time limit exceeded"
 }
 
-func ExecutePythonCode(pythonCode string) (string, error) {
+func ExecutePythonCode(pythonCode, input string) (string, error) {
 	tmpfile, err := ioutil.TempFile("", "script-*.py")
 	if err != nil {
 		return "", fmt.Errorf("could not create temporary file: %v", err)
@@ -36,6 +36,7 @@ func ExecutePythonCode(pythonCode string) (string, error) {
 
 	// Execute the Python script using the Python interpreter with the context
 	cmd := exec.CommandContext(ctx, "python3", tmpfile.Name())
+	cmd.Stdin = strings.NewReader(input) // Pass input to Python script
 	output, err := cmd.CombinedOutput()
 
 	// Check if the context deadline was exceeded
@@ -43,12 +44,10 @@ func ExecutePythonCode(pythonCode string) (string, error) {
 		return "execution timeout: time limit exceeded", &TLEError{}
 	}
 
-	// Return the output and any error encounteredy
+	// Return the output and any error encountered
 	if err != nil {
 		return "", fmt.Errorf("execution error: %v", err)
 	}
-
-	fmt.Println(string(output))
 
 	return string(output), nil
 }

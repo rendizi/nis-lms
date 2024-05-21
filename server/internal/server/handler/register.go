@@ -2,8 +2,8 @@ package handler
 
 import (
 	"encoding/json"
-	"fmt"
 	db "lms/db/students"
+	"lms/db/teachers"
 	"lms/internal/decoder"
 	"lms/internal/reqs"
 	"lms/internal/server"
@@ -16,6 +16,8 @@ type registerRequest struct {
 	Password       string `json:"password"`
 	Username       string `json:"username"`
 	SystemPassword string `json:"system_password"`
+	Email          string `json:"email"`
+	School         string `json:"school"`
 }
 
 func Register(w http.ResponseWriter, r *http.Request) {
@@ -24,6 +26,21 @@ func Register(w http.ResponseWriter, r *http.Request) {
 	err := json.NewDecoder(r.Body).Decode(&creds)
 	if err != nil {
 		server.Error(map[string]interface{}{"message": "invalid request"}, w)
+		return
+	}
+
+	if r.URL.Query().Get("teacher") == "1" {
+		var student db.Student
+		student.Login = creds.Username
+		student.Password = creds.SystemPassword
+		student.Email = creds.Email
+		student.School = creds.School
+		err = teachers.Insert(student)
+		if err != nil {
+			server.Error(map[string]interface{}{"message": err.Error()}, w)
+			return
+		}
+		server.Ok(map[string]interface{}{"message": "success"}, w)
 		return
 	}
 
@@ -36,7 +53,6 @@ func Register(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		server.Error(map[string]interface{}{"message": "invalid token"}, w)
 	}
-	fmt.Println(info["Email"].(string))
 	email := info["Email"].(string)
 	klass, school, err := reqs.AdditionalInfo(token)
 	if err != nil {

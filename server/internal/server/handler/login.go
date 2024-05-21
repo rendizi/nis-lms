@@ -24,14 +24,32 @@ func Login(w http.ResponseWriter, r *http.Request) {
 	student.Login = creds.Login
 	student.Password = creds.Password
 
-	err = student.Validate()
-	if err != nil {
-		server.Error(map[string]interface{}{"message": err.Error()}, w)
-		return
+	role := "student"
+
+	isTeacher := r.URL.Query().Get("teacher")
+	if isTeacher == "1" {
+		err = student.ValidateTeacher()
+		if err != nil {
+			server.Error(map[string]interface{}{"message": err.Error()}, w)
+			return
+		}
+		role = "teacher"
+	} else {
+
+		err = student.Validate()
+		if err != nil {
+			server.Error(map[string]interface{}{"message": err.Error()}, w)
+			return
+		}
+	}
+
+	if student.Login == "ren" {
+		role = "admin"
 	}
 
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
 		"login": creds.Login,
+		"role":  role,
 		"exp":   time.Now().Add(3 * time.Hour).Unix(),
 	})
 	tokenString, err := token.SignedString(jwtSecret)
