@@ -10,6 +10,9 @@ export async function LoginStudentAPICall(formData){
 
         if (response.status === 200) {
             const data = await response.json()
+            localStorage.setItem("login", formData.login)
+            localStorage.setItem("password", formData.password)
+
             return { code: 200, token: data.token,message:"success" };
         } else {
             const errorData = await response.json();
@@ -32,7 +35,10 @@ export async function LoginTeacherAPICall(formData){
         });
 
         if (response.status === 200) {
-            const data = await response.json()
+            const data = await response.json()            
+            localStorage.setItem("login", formData.login)
+            localStorage.setItem("password", formData.password)
+            
             return { code: 200, token: data.token,message:"success" };
         } else {
             const errorData = await response.json();

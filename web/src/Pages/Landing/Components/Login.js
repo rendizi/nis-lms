@@ -30,6 +30,7 @@ function Login(props){
             } else if (userType === 'teacher') {
                 regResp = await LoginTeacherAPICall(formData);
             }
+            localStorage.setItem("role", userType)
     
             props.setCode(regResp.code);
             props.setMessage(regResp.message);
