@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { RegisterStudentAPICall } from '../../../action/Auth/register';
 
 function RegisterStudent(props) {
     const [formData, setFormData] = useState({
@@ -43,24 +44,9 @@ function RegisterStudent(props) {
     };
 
     async function register() {
-        console.log(formData);
-        try {
-            const response = await fetch('http://localhost:8080/register', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(formData)
-            });
-    
-            if (response.status === 200) {
-                console.log('success');
-            } else {
-                console.log('Request failed with status:', response.status);
-            }
-        } catch (error) {
-            console.error('Error:', error);
-        }
+        let regResp = RegisterStudentAPICall(formData)
+        props.setCode((await regResp).code)
+        props.setMessage((await regResp).message)
     }    
 
     return (
