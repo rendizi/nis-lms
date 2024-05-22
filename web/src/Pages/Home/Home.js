@@ -3,6 +3,9 @@ import { isTokenValid } from "../../action/Auth/validate";
 import { LoginStudentAPICall } from "../../action/Auth/login";
 import { LoginTeacherAPICall } from "../../action/Auth/login";
 import Navbar from "../Components/Navbar";
+import Tasks from "./Components/Tasks";
+import ClassWorks from "./Components/ClassWorks";
+import Search from "./Components/Search";
 
 function Home(){
     const [token, setToken] = React.useState(null)
@@ -45,9 +48,17 @@ function Home(){
     
 
     return (
-        <>
+        <div className="h-screen bg-base-200">
+        
             <Navbar username={localStorage.getItem("login")}/>
-        </>
+
+            <div className="h-1/4">
+                <ClassWorks />
+            </div>
+            <div className="h-3/5">
+                <Tasks/>
+            </div>
+        </div>
     )
 }
 

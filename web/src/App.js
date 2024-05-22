@@ -1,8 +1,11 @@
 import './App.css';
 import Landing from './Pages/Landing/Landing';
 import Home from './Pages/Home/Home';
-import Task from './Pages/Task/Task';
 import { BrowserRouter, Routes, Route } from "react-router-dom";
+import Profile from './Pages/Other/Profile';
+import Top from './Pages/Other/Top';
+import All from './Pages/Other/All';
+import Task from './Pages/Task/Task';
 
 function App() {
   return (
@@ -11,7 +14,9 @@ function App() {
           
           <Route index element={<Landing />} />
           <Route path="/home" element={<Home />} />
-          <Route path="/task" element={<Task />} />
+          <Route path="/top" element={<Top />} />
+          <Route path="/u/*" element={<Profile/>}/>
+          <Route path="/t/*" element={<Task/>}/>
       </Routes>
     </BrowserRouter>
   );

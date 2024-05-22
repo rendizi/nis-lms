@@ -38,3 +38,8 @@ code {
 .animate-fade-in-out {
   animation: fade-in-out 5s ease forwards;
 }
+
+.cursor-pointer {
+  cursor: pointer; 
+}
+

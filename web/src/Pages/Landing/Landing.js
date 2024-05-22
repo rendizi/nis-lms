@@ -24,6 +24,8 @@ function Landing() {
             };
         }
     }, [code, message]);
+
+    
     
 
 
@@ -74,7 +76,7 @@ function Landing() {
                     </svg>
                     <span>Error! {message === null ? "Something went wrong. Try again later" : message}</span>
                 </div>
-            ) : code == 200 && (
+            ) : code === 200 && (
                 <div
                     role="alert"
                     className="alert alert-success fixed bottom-0 right-0 mb-4 mr-4 md:w-1/2 w-full z-50 animate-fade-in-out"

@@ -7,6 +7,34 @@ function Login(props){
         password: '',
     });
     const [userType, setUserType] = useState('student');
+    const [isChecked, setIsChecked] = useState(false);
+
+    const handleCheckboxChange = (event) => {
+        setIsChecked(event.target.checked);
+      };
+
+    React.useEffect(()=>{
+        async function log(){
+        let storedLogin = localStorage.getItem("login")
+        let storedPassword = localStorage.getItem("password")
+        let storedRole = localStorage.getItem("role")
+
+        if (storedLogin !== null && storedPassword !== null && storedRole!== null){
+            let regResp;
+            if (userType === 'student') {
+                regResp = await LoginStudentAPICall({login: storedLogin, password: storedPassword});
+            } else if (userType === 'teacher') {
+                regResp = await LoginTeacherAPICall({login: storedLogin, password: storedPassword});
+            }
+        
+            if (regResp.code === 200) {
+                localStorage.setItem('token', regResp.token);
+                window.location.href = '/home';
+            }
+        }}
+        log()
+
+    },[])
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -31,6 +59,10 @@ function Login(props){
                 regResp = await LoginTeacherAPICall(formData);
             }
             localStorage.setItem("role", userType)
+
+            if (!isChecked){
+                localStorage.removeItem("password")
+            }
     
             props.setCode(regResp.code);
             props.setMessage(regResp.message);
@@ -71,7 +103,18 @@ function Login(props){
                         <span className="ml-1">Teacher</span>
                     </label>
                 </div>
-                <div className="form-control mt-6">
+                <div className="form-control flex justify-center items-center">
+                    <label className="label cursor-pointer">
+                        <input
+                        type="checkbox"
+                        className="checkbox"
+                        checked={isChecked}
+                        onChange={handleCheckboxChange}
+                        />
+                        <span className="label-text ml-2">Remember me</span>
+                    </label>
+                </div>
+                <div className="form-control mt-2">
                     <button className="btn btn-primary" type="submit">Login</button>
                     <div className="justify-center align-center flex mt-2">
                         <a href="#" onClick={(e) => {e.preventDefault(); props.set(false);}}>Don't have an account yet?</a>

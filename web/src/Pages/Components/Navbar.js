@@ -31,7 +31,13 @@ React.useEffect(() => {
                             <ul className="p-2 bg-base-100 rounded-t-none">
                                 <li><a href={profile}><i className="fas fa-user-circle"></i> Profile</a></li>
                                 <li><a href="/top"><i className="fas fa-chevron-up"></i> Top</a></li>
-                                <li><a href="/logout"><i className="fas fa-sign-out-alt"></i> Log out</a></li>
+                                <li><a href="/home"><i className="fas fa-home"></i> Home</a></li>
+                                <li><a href="#" onClick={()=>{
+                                    localStorage.removeItem("token")
+                                    localStorage.removeItem("login")
+                                    localStorage.removeItem("password")
+                                    window.location.href = "/"
+                                }}><i className="fas fa-sign-out-alt"></i> Log out</a></li>
                             </ul>
                         </details>
                     </li>
