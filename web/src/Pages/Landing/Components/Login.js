@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { LoginStudentAPICall } from "../../../action/Auth/login";
+import { LoginStudentAPICall,LoginTeacherAPICall } from "../../../action/Auth/login";
 
 function Login(props){
     const [formData, setFormData] = useState({
@@ -24,18 +24,26 @@ function Login(props){
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            let regResp = await LoginStudentAPICall(formData);
+            let regResp;
+            if (userType === 'student') {
+                regResp = await LoginStudentAPICall(formData);
+            } else if (userType === 'teacher') {
+                regResp = await LoginTeacherAPICall(formData);
+            }
+    
             props.setCode(regResp.code);
             props.setMessage(regResp.message);
     
             if (regResp.code === 200) {
                 localStorage.setItem('token', regResp.token);
+                window.location.href = '/home';
             }
         } catch (error) {
             props.setCode(400);
             props.setMessage("Login failed: " + error.message);
         }
-    };   
+    };
+    
 
     return (
         <div className="card shrink-0 w-full max-w-sm bg-base-100">

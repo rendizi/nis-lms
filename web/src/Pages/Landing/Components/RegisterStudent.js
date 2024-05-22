@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
 import { RegisterStudentAPICall } from '../../../action/Auth/register';
+import { LoginStudentAPICall } from '../../../action/Auth/login';
+
 
 function RegisterStudent(props) {
     const [formData, setFormData] = useState({
@@ -37,16 +39,34 @@ function RegisterStudent(props) {
         setShowAdditionalFields(true)
     }
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
-
-        console.log(formData)
-    };
+        try {
+            let regResp = await RegisterStudentAPICall(formData);
+            props.setCode(regResp.code);
+            props.setMessage(regResp.message);
+    
+            if (regResp.code === 200) {
+                let regResp = await LoginStudentAPICall(formData);
+                props.setCode(regResp.code);
+                props.setMessage(regResp.message);
+        
+                if (regResp.code === 200) {
+                    localStorage.setItem('token', regResp.token);
+                    window.location.href = '/home';
+                      }
+            }
+        } catch (error) {
+            props.setCode(400);
+            props.setMessage("Login failed: " + error.message);
+        }
+    };   
 
     async function register() {
         let regResp = RegisterStudentAPICall(formData)
         props.setCode((await regResp).code)
         props.setMessage((await regResp).message)
+        
     }    
 
     return (
