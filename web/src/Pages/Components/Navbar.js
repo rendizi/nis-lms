@@ -23,6 +23,7 @@ React.useEffect(() => {
             </div>
             <div className="flex-none">
                 <ul className="menu menu-horizontal px-1">
+                <li><a href="/home"><i className="fas fa-home"></i> Home</a></li>
                     <li>
                         <details>
                             <summary>
@@ -31,7 +32,7 @@ React.useEffect(() => {
                             <ul className="p-2 bg-base-100 rounded-t-none">
                                 <li><a href={profile}><i className="fas fa-user-circle"></i> Profile</a></li>
                                 <li><a href="/top"><i className="fas fa-chevron-up"></i> Top</a></li>
-                                <li><a href="/home"><i className="fas fa-home"></i> Home</a></li>
+                                
                                 <li><a href="#" onClick={()=>{
                                     localStorage.removeItem("token")
                                     localStorage.removeItem("login")

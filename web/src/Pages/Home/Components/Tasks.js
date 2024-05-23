@@ -30,30 +30,31 @@ function Tasks() {
         <div className="flex justify-center items-center h-full">
             <div className="flex flex-col justify-between items-center h-full bg-neutral   w-1/2 rounded-2xl relative">
                 <div className="absolute top-0 right-0 mt-1 mr-1">
-                    <div className="join">
-                        <div>
-                            <input
-                                className="input input-bordered join-item"
-                                placeholder="Search"
-                                value={searchInput}
-                                onChange={(e) => setSearchInput(e.target.value)}
-                            />
-                        </div>
-                        <select
-                            className="select select-bordered join-item"
-                            value={difficulty}
-                            onChange={(e) => setDifficulty(e.target.value)}
-                        >
-                            <option value="" disabled selected>Difficulty</option>
-                            <option value="easy">Easy</option>
-                            <option value="medium">Medium</option>
-                            <option value="hard">Hard</option>
-                            <option value="">All</option>
-                        </select>
-                        <div className="indicator">
-                            <button className="btn join-item" onClick={handleSearch}>Search</button>
-                        </div>
+                <div className="join">
+                    <div>
+                        <input
+                            className="input input-bordered join-item  "
+                            placeholder="Search"
+                            value={searchInput}
+                            onChange={(e) => setSearchInput(e.target.value)}
+                        />
                     </div>
+                    <select
+                        className="select select-bordered join-item "
+                        value={difficulty}
+                        onChange={(e) => setDifficulty(e.target.value)}
+                    >
+                        <option value="" disabled selected>Difficulty</option>
+                        <option value="easy">Easy</option>
+                        <option value="medium">Medium</option>
+                        <option value="hard">Hard</option>
+                        <option value="">All</option>
+                    </select>
+                    <div className="indicator">
+                        <button className="btn join-item " onClick={handleSearch}>Search</button>
+                    </div>
+                </div>
+
                 </div>
                 <div className="flex-1 flex flex-col justify-center items-center w-full p-4 space-y-2 mt-5">
                     {loading && <p>Loading...</p>}

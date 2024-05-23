@@ -97,8 +97,7 @@ function Task() {
             });
             
             const responseData = await response.json();
-            console.log(responseData);
-            if (responseData.message == "success"){
+            if (responseData.message == "success" && responseData.total === responseData.passed){
                 setSolved(true)
             }
             setResult(responseData)
@@ -127,7 +126,7 @@ function Task() {
                             <div className="mt-4">
                                 <p className="font-bold">Examples:</p>
                                 
-                                {data.example.map((exampleArray, index) => (
+                                {data!==null && data.example && data.example.map((exampleArray, index) => (
                                 <div key={index} className="mt-4">
                                     {exampleArray.split(";").map((example, subIndex) => (
                                         <p key={subIndex} className="mt-2">{example}</p>
@@ -157,7 +156,8 @@ function Task() {
                     </div>
                     <div className="p-1">
                             <div className="flex justify-center align-center mt-5">
-                                <button className="btn btn-active btn-primary" onClick={submitCode}>Submit code</button>        
+                                {localStorage.getItem("role") !== "teacher" &&
+                                <button className="btn btn-active btn-primary" onClick={submitCode}>Submit code</button>    }    
                                 <button className="btn btn-active btn-accent ml-5" onClick={runCode}>Run code</button>                                                
                             </div>
                             {output !== null && result === null &&
